@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA Milionária - Renda Extra</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:#0b0f1a;
+color:white;
+text-align:center;
+overflow-x:hidden;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:40px 20px;
+position:relative;
+z-index:1;
+}
+
+h1{
+font-size:42px;
+}
+
+h2{
+margin-top:40px;
+}
+
+.hero img{
+display:none;
+}
+
+@keyframes float{
+0%{transform:translateY(0)}
+50%{transform:translateY(-10px)}
+100%{transform:translateY(0)}
+}
+
+.buy-btn{
+display:inline-block;
+background:#00ff88;
+color:black;
+padding:18px 40px;
+font-size:22px;
+border-radius:8px;
+text-decoration:none;
+margin-top:20px;
+font-weight:bold;
+transition:0.3s;
+}
+
+.buy-btn:hover{
+transform:scale(1.05);
+background:#00cc6a;
+}
+
+.countdown{
+font-size:28px;
+margin-top:20px;
+color:#00ff88;
+}
+
+.benefits{
+margin-top:40px;
+text-align:left;
+}
+
+.benefits li{
+margin:10px 0;
+}
+
+.testimonials{
+margin-top:40px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:#141a2e;
+padding:20px;
+border-radius:10px;
+}
+
+.authority{
+margin-top:60px;
+background:#141a2e;
+padding:30px;
+border-radius:10px;
+}
+
+.faq{
+margin-top:50px;
+text-align:left;
+}
+
+.faq-item{
+margin-bottom:15px;
+background:#141a2e;
+padding:15px;
+border-radius:8px;
+}
+
+.guarantee{
+margin-top:40px;
+background:#0f3;
+color:black;
+padding:25px;
+border-radius:10px;
+font-weight:bold;
+}
+
+footer{
+margin-top:60px;
+padding:20px;
+opacity:0.6;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>IA Milionária</h1>
+
+<p>Descubra como usar Inteligência Artificial para criar renda extra</p>
+
+<div class="hero">
+
+<img src="capa.jpg">
+
+</div>
+
+<div class="countdown">
+
+🔥 Oferta termina em:  
+<div id="timer"></div>
+
+</div>
+
+<a class="buy-btn" href="https://liink.uk/RSzcCXA7w1Mk" target="_blank">
+COMPRAR AGORA
+</a>
+
+<h2>O que você vai aprender</h2>
+
+<ul class="benefits">
+<li>✔ Como ganhar dinheiro usando Inteligência Artificial</li>
+<li>✔ Ferramentas secretas usadas por profissionais</li>
+<li>✔ Estratégias simples que qualquer pessoa pode aplicar</li>
+<li>✔ Métodos para criar renda extra online</li>
+</ul>
+
+<a class="buy-btn" href="https://liink.uk/RSzcCXA7w1Mk" target="_blank">
+QUERO COMEÇAR AGORA
+</a>
+
+<h2>Prova Social</h2>
+
+<div class="testimonials">
+
+<div class="card">
+⭐⭐⭐⭐⭐  
+<br><br>
+"Esse ebook abriu minha mente sobre IA. Já comecei a aplicar!"
+<br><br>
+— Lucas M.
+</div>
+
+<div class="card">
+⭐⭐⭐⭐⭐  
+<br><br>
+"Conteúdo simples e direto. Vale muito mais que o preço."
+<br><br>
+— Amanda R.
+</div>
+
+<div class="card">
+⭐⭐⭐⭐⭐  
+<br><br>
+"Aprendi ferramentas que nem sabia que existiam."
+<br><br>
+— Pedro S.
+</div>
+
+</div>
+
+<div class="authority">
+
+<h2>Sobre o Autor</h2>
+
+<p>
+
+Especialista em tecnologia e Inteligência Artificial aplicada a negócios online.
+
+Criou este guia para ajudar iniciantes a entender e usar IA para gerar renda extra na internet.
+
+</p>
+
+</div>
+
+<div class="guarantee">
+
+🛡 GARANTIA DE 7 DIAS  
+
+Se você não gostar do ebook, pode pedir reembolso total dentro de 7 dias.
+
+</div>
+
+<a class="buy-btn" href="https://liink.uk/RSzcCXA7w1Mk" target="_blank">
+GARANTIR MEU ACESSO
+</a>
+
+<div class="faq">
+
+<h2>Perguntas Frequentes</h2>
+
+<div class="faq-item">
+
+<b>Como recebo o ebook?</b><br>
+Após a compra você recebe acesso imediato para download.
+
+</div>
+
+<div class="faq-item">
+
+<b>Preciso ter experiência?</b><br>
+Não. O ebook foi feito para iniciantes.
+
+</div>
+
+<div class="faq-item">
+
+<b>Funciona mesmo?</b><br>
+As estratégias são baseadas em ferramentas reais usadas no mercado.
+
+</div>
+
+</div>
+
+<a class="buy-btn" href="https://liink.uk/RSzcCXA7w1Mk" target="_blank">
+COMPRAR O EBOOK
+</a>
+
+<footer>
+
+© 2026 IA Milionária
+
+</footer>
+
+</div>
+
+<script>
+
+var countDownDate = new Date();
+countDownDate.setHours(countDownDate.getHours() + 6);
+
+var x = setInterval(function() {
+
+var now = new Date().getTime();
+var distance = countDownDate - now;
+
+var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+document.getElementById("timer").innerHTML =
+hours + "h "
++ minutes + "m "
++ seconds + "s ";
+
+}, 1000);
+
+</script>
+
+</body>
+</html>
