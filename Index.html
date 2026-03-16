@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GiphyHub - GIFs, Emojis & Figurinhas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --bg-input: #f9fafb;
+            --text-primary: #111827;
+            --text-muted: #374151;
+            --accent: #4f46e5;
+            --border: #e5e7eb;
+        }
+
+        .dark-mode {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-input: #1e293b;
+            --text-primary: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #818cf8;
+            --border: #334155;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .text-main { color: var(--text-primary); }
+        .text-dim { color: var(--text-muted); }
+
+        .card-item {
+            background-color: var(--bg-secondary);
+            transition: transform 0.2s;
+        }
+
+        .card-item:hover {
+            transform: scale(1.03);
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-active {
+            border-bottom: 2px solid var(--accent) !important;
+            color: var(--accent) !important;
+            font-weight: 700;
+        }
+        
+        .custom-input {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 w-full border-b border-gray-200 dark:border-gray-800 bg-opacity-95 backdrop-blur-md" style="background-color: var(--bg-primary);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-main">GiphyHub</h1>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button id="configBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition text-main">
+                    <i class="fas fa-cog text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- Search Bar -->
+        <div class="relative max-w-2xl mx-auto mb-8">
+            <input type="text" id="searchInput" placeholder="Pesquisar GIFs, emojis ou figurinhas..." 
+                   class="w-full pl-12 pr-4 py-4 rounded-2xl custom-input focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-dim"></i>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex justify-center gap-8 mb-8 overflow-x-auto hide-scrollbar whitespace-nowrap border-b border-gray-200 dark:border-gray-800">
+            <button onclick="changeCategory('gifs')" id="tab-gifs" class="pb-4 font-medium transition tab-btn tab-active">GIFs</button>
+            <button onclick="changeCategory('stickers')" id="tab-stickers" class="pb-4 font-medium transition tab-btn">Figurinhas</button>
+            <button onclick="changeCategory('emojis')" id="tab-emojis" class="pb-4 font-medium transition tab-btn">Emojis</button>
+            <button onclick="changeCategory('favorites')" id="tab-favorites" class="pb-4 font-medium transition tab-btn">Favoritos</button>
+        </div>
+
+        <!-- Grid -->
+        <div id="contentGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Items injected by JS -->
+        </div>
+    </main>
+
+    <!-- Config Modal -->
+    <div id="configModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-overlay">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-main" id="txtConfigTitle">Configurações</h2>
+                <button id="closeConfig" class="text-dim hover:text-red-500"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Theme Toggle -->
+                <div class="flex justify-between items-center">
+                    <span class="text-main font-semibold" id="txtTheme">Modo Escuro</span>
+                    <button id="themeToggle" class="w-12 h-6 rounded-full bg-gray-300 dark:bg-indigo-600 relative transition">
+                        <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-all dark:translate-x-6"></div>
+                    </button>
+                </div>
+
+                <!-- Language Selection -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-dim" id="txtLangLabel">Idioma</label>
+                    <select id="langSelect" class="w-full p-3 rounded-xl custom-input outline-none border focus:border-indigo-500">
+                        <option value="pt">Português</option>
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                        <option value="it">Italiano</option>
+                        <option value="jp">日本語</option>
+                        <option value="cn">中文</option>
+                        <option value="ru">Русский</option>
+                        <option value="kr">한국어</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail View Modal -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-overlay">
+        <div class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl overflow-hidden relative shadow-2xl">
+            <button id="closeDetail" class="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 rounded-full text-white flex items-center justify-center hover:bg-black">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="flex flex-col md:flex-row h-full max-h-[90vh]">
+                <div class="w-full md:w-2/3 bg-black flex items-center justify-center p-4 min-h-[300px]">
+                    <img id="detailImg" src="" alt="View" class="max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                </div>
+                
+                <div class="w-full md:w-1/3 p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 text-main" id="detailTitle">Item</h3>
+                        <p class="text-sm text-dim mb-6" id="detailDesc">Clique abaixo para interagir com este item.</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <button onclick="handleAction('favorite')" class="w-full py-3 px-4 bg-indigo-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20">
+                            <i class="fas fa-heart"></i> <span id="btnFav">Salvar Favorito</span>
+                        </button>
+                        <button onclick="handleAction('share')" class="w-full py-3 px-4 bg-gray-100 dark:bg-gray-800 text-main rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-80 transition">
+                            <i class="fas fa-share-alt"></i> <span id="btnShare">Compartilhar</span>
+                        </button>
+                        <button onclick="handleAction('download')" class="w-full py-3 px-4 border border-gray-200 dark:border-gray-700 text-main rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                            <i class="fas fa-download"></i> <span id="btnDownload">Baixar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Key fornecida pelo usuário
+        const GIPHY_API_KEY = "2IjYqHynCUhzsXdj3QcA4DibJQ8cTLn1";
+        
+        // Cache simples para respeitar o limite de 100 req/hora
+        const cache = {
+            gifs: null,
+            stickers: null,
+            emojis: null,
+            search: {}
+        };
+
+        const translations = {
+            pt: { config: "Configurações", theme: "Modo Escuro", lang: "Idioma", search: "Pesquisar...", fav: "Salvar Favorito", share: "Compartilhar", download: "Baixar" },
+            en: { config: "Settings", theme: "Dark Mode", lang: "Language", search: "Search...", fav: "Save Favorite", share: "Share", download: "Download" },
+            es: { config: "Ajustes", theme: "Modo Oscuro", lang: "Idioma", search: "Buscar...", fav: "Favorito", share: "Compartir", download: "Descargar" },
+            fr: { config: "Paramètres", theme: "Mode Sombre", lang: "Langue", search: "Rechercher...", fav: "Favori", share: "Partager", download: "Télécharger" },
+            de: { config: "Einstellungen", theme: "Dunkelmodus", lang: "Sprache", search: "Suche...", fav: "Favorit", share: "Teilen", download: "Herunterladen" },
+            it: { config: "Impostazioni", theme: "Modo Scuro", lang: "Lingua", search: "Cerca...", fav: "Preferito", share: "Condividi", download: "Scarica" },
+            jp: { config: "設定", theme: "ダークモード", lang: "言語", search: "検索...", fav: "お気に入り", share: "共有", download: "ダウンロード" },
+            cn: { config: "设置", theme: "深色模式", lang: "语言", search: "搜索...", fav: "收藏", share: "分享", download: "下载" },
+            ru: { config: "Настройки", theme: "Темный режим", lang: "Язык", search: "Поиск...", fav: "Избранное", share: "Поделиться", download: "Скачать" },
+            kr: { config: "설정", theme: "다크 모드", lang: "언어", search: "검색...", fav: "즐겨찾기", share: "공유", download: "다운로드" }
+        };
+
+        let currentCategory = 'gifs';
+        let favorites = JSON.parse(localStorage.getItem('gh_favorites') || '[]');
+        let isDarkMode = false;
+        let selectedItem = null;
+        let searchTimeout;
+
+        const grid = document.getElementById('contentGrid');
+        const configModal = document.getElementById('configModal');
+        const detailModal = document.getElementById('detailModal');
+        const themeToggle = document.getElementById('themeToggle');
+
+        async function init() {
+            renderGrid();
+            setupEventListeners();
+        }
+
+        async function fetchFromGiphy(type, query = "") {
+            const limit = 50;
+            let url = "";
+            
+            if (query) {
+                // Se for busca
+                const endpoint = type === 'stickers' ? 'stickers' : 'gifs';
+                url = `https://api.giphy.com/v1/${endpoint}/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=${limit}&rating=g`;
+            } else {
+                // Se for trending (inicial)
+                const endpoint = type === 'stickers' ? 'stickers' : 'gifs';
+                url = `https://api.giphy.com/v1/${endpoint}/trending?api_key=${GIPHY_API_KEY}&limit=${limit}&rating=g`;
+            }
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                return result.data.map(item => ({
+                    id: item.id,
+                    type: type,
+                    url: item.images.fixed_height.url,
+                    title: item.title || "Giphy Content"
+                }));
+            } catch (error) {
+                console.error("Erro na API:", error);
+                return [];
+            }
+        }
+
+        function getEmojis() {
+            // Emojis não vêm da API do Giphy da mesma forma, mantemos o gerador Twemoji estável
+            return Array.from({length: 200}, (_, i) => {
+                const hex = (0x1F600 + i).toString(16);
+                return { 
+                    id: `e${i}`, 
+                    type: 'emoji', 
+                    url: `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${hex}.png`, 
+                    title: `Emoji ${i+1}` 
+                };
+            });
+        }
+
+        async function renderGrid(filter = "") {
+            grid.innerHTML = `<div class="col-span-full text-center py-20 text-dim">Carregando conteúdo real...</div>`;
+            
+            let data = [];
+
+            if (currentCategory === 'favorites') {
+                data = filter ? favorites.filter(i => i.title.toLowerCase().includes(filter.toLowerCase())) : favorites;
+            } else if (currentCategory === 'emojis') {
+                data = getEmojis();
+                if (filter) data = data.filter(i => i.title.toLowerCase().includes(filter.toLowerCase()));
+            } else {
+                // Lógica de Cache/API para GIFs e Stickers
+                const cacheKey = filter ? `${currentCategory}_search_${filter}` : `${currentCategory}_trending`;
+                
+                if (cache[cacheKey]) {
+                    data = cache[cacheKey];
+                } else {
+                    data = await fetchFromGiphy(currentCategory, filter);
+                    cache[cacheKey] = data; // Salva no cache da sessão para economizar requisições
+                }
+            }
+
+            grid.innerHTML = "";
+            data.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "card-item aspect-square rounded-2xl cursor-pointer overflow-hidden flex items-center justify-center p-2";
+                div.innerHTML = `<img src="${item.url}" class="w-full h-full object-cover rounded-xl" loading="lazy" referrerpolicy="no-referrer">`;
+                div.onclick = () => openDetail(item);
+                grid.appendChild(div);
+            });
+            
+            if(data.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-20 text-dim font-medium">Nenhum item encontrado.</div>`;
+            }
+        }
+
+        function changeCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+            });
+            document.getElementById(`tab-${cat}`).classList.add('tab-active');
+            document.getElementById('searchInput').value = ""; // Limpa busca ao trocar aba
+            renderGrid();
+        }
+
+        function openDetail(item) {
+            selectedItem = item;
+            document.getElementById('detailImg').src = item.url;
+            document.getElementById('detailTitle').innerText = item.title;
+            detailModal.classList.remove('hidden');
+        }
+
+        function setupEventListeners() {
+            document.getElementById('configBtn').onclick = () => configModal.classList.remove('hidden');
+            document.getElementById('closeConfig').onclick = () => configModal.classList.add('hidden');
+            document.getElementById('closeDetail').onclick = () => detailModal.classList.add('hidden');
+            
+            themeToggle.onclick = () => {
+                isDarkMode = !isDarkMode;
+                document.body.classList.toggle('dark-mode');
+            };
+
+            document.getElementById('langSelect').onchange = (e) => {
+                const lang = e.target.value;
+                const t = translations[lang];
+                document.getElementById('txtConfigTitle').innerText = t.config;
+                document.getElementById('txtTheme').innerText = t.theme;
+                document.getElementById('txtLangLabel').innerText = t.lang;
+                document.getElementById('searchInput').placeholder = t.search;
+                document.getElementById('btnFav').innerText = t.fav;
+                document.getElementById('btnShare').innerText = t.share;
+                document.getElementById('btnDownload').innerText = t.download;
+            };
+
+            document.getElementById('searchInput').oninput = (e) => {
+                clearTimeout(searchTimeout);
+                // Debounce para não gastar API a cada tecla
+                searchTimeout = setTimeout(() => {
+                    renderGrid(e.target.value);
+                }, 500);
+            };
+
+            window.onclick = (e) => {
+                if (e.target === configModal) configModal.classList.add('hidden');
+                if (e.target === detailModal) detailModal.classList.add('hidden');
+            };
+        }
+
+        function handleAction(type) {
+            if (!selectedItem) return;
+
+            const toast = (msg) => {
+                const t = document.createElement('div');
+                t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-bounce font-bold text-center min-w-[200px]";
+                t.innerText = msg;
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 2000);
+            };
+
+            switch(type) {
+                case 'favorite':
+                    if (!favorites.some(f => f.id === selectedItem.id)) {
+                        favorites.push(selectedItem);
+                        localStorage.setItem('gh_favorites', JSON.stringify(favorites));
+                        toast("Salvo nos favoritos!");
+                    } else {
+                        toast("Já está nos favoritos!");
+                    }
+                    break;
+                case 'share':
+                    if (navigator.share) {
+                        navigator.share({ title: selectedItem.title, url: selectedItem.url });
+                    } else {
+                        // Fallback clipboard
+                        const el = document.createElement('textarea');
+                        el.value = selectedItem.url;
+                        document.body.appendChild(el);
+                        el.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(el);
+                        toast("Link copiado!");
+                    }
+                    break;
+                case 'download':
+                    const a = document.createElement('a');
+                    a.href = selectedItem.url;
+                    a.download = `GiphyHub_${selectedItem.id}.gif`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    toast("Download iniciado...");
+                    break;
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
+
